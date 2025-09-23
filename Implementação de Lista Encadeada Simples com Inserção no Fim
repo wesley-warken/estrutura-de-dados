@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Definição da estrutura do nó da lista encadeada
+typedef struct no{
+    int valor;            // valor armazenado no nó
+    struct no *proximo;   // ponteiro para o próximo nó
+} No;
+
+// Função que cria um novo nó na memória
+No* criar_no(){
+    No *no = (No*)malloc(sizeof(No)); // aloca dinamicamente espaço para um nó
+    return no;                        // retorna o endereço do nó criado
+}
+
+// Função para inserir um nó no final da lista
+No* inserir_no_fim(No* lista, int dado){
+    // Cria um novo nó
+    No *no = criar_no();
+    no->valor = dado;
+
+    // Se a lista estiver vazia, o novo nó será o primeiro
+    if(lista == NULL){
+        no->proximo = NULL;  // como é o único nó, aponta para NULL
+        lista = no;          // a lista passa a ser esse nó
+    }else{
+        // Caso contrário, percorre até o último nó
+        No* aux = lista;
+        while(aux->proximo != NULL){
+            aux = aux->proximo;
+        }
+        // Insere o novo nó no final
+        no->proximo = NULL;   // último nó sempre aponta para NULL
+        aux->proximo = no;    // o antigo último aponta para o novo
+    }
+    return lista; // retorna a referência (início da lista não muda)
+}
+
+// Função para imprimir todos os elementos da lista
+void imprimir(No* lista){
+    No* aux = lista;
+
+    // Percorre enquanto não chega no fim da lista (NULL)
+    while(aux!=NULL){
+        printf("%d ", aux->valor); // imprime o valor do nó
+        aux = aux->proximo;        // avança para o próximo nó
+    }
+}
+
+int main(){
+    No* lista = NULL; // inicializa a lista como vazia
+
+    // Insere alguns elementos na lista
+    lista = inserir_no_fim(lista, 5);
+    lista = inserir_no_fim(lista, 10);
+    lista = inserir_no_fim(lista, 2);
+    lista = inserir_no_fim(lista, 4);
+
+    // Imprime a lista: saída esperada -> 5 10 2 4
+    imprimir(lista);
+
+    return 0;
+}
