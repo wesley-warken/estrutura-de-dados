@@ -1,0 +1,133 @@
+#include <stdio.h>   // Biblioteca padrão para entrada e saída (printf, scanf, etc.)
+#include <stdlib.h>  // Biblioteca padrão para funções de alocação (malloc, free)
+
+// Definição da estrutura que representa um nó da pilha
+typedef struct no {
+    int valor;            // Valor armazenado no nó
+    struct no *proximo;   // Ponteiro para o próximo nó (o nó abaixo na pilha)
+} No;
+
+// Função responsável por criar um novo nó na memória dinâmica (heap)
+No* criarNo() {
+    No* no = (No*)malloc(sizeof(No)); // Aloca memória do tamanho da estrutura No
+    return no;                        // Retorna o ponteiro para o novo nó (ou NULL se falhar)
+}
+
+// Função para empilhar (inserir) um novo elemento no topo da pilha
+No* empilhar(No* topo, int num) {
+
+    No* no = criarNo(); // Cria um novo nó
+
+    // Verifica se a alocação de memória falhou
+    if (no == NULL) {
+        printf("Erro de alocamento de memoria\n");
+        return NULL; // Retorna NULL para indicar falha
+    }
+
+    // Atribui o valor recebido ao campo 'valor' do novo nó
+    no->valor = num;
+    // Faz o novo nó apontar para o nó que antes era o topo
+    no->proximo = topo;
+    // Atualiza o topo da pilha: agora o novo nó é o topo
+    topo = no;
+
+    // Retorna o novo topo
+    return topo;
+}
+
+// Função para desempilhar (remover) o elemento do topo da pilha
+No* desimplilhar(No* topo) {
+
+    // Se a pilha estiver vazia, não há o que desempilhar
+    if (topo == NULL) {
+        printf("Pilha vazia, nada para desempilhar.\n");
+        return NULL; // Retorna NULL pois a pilha continua vazia
+    }
+
+    // Cria um ponteiro auxiliar para guardar o topo atual
+    No* aux = topo;
+    // Armazena o valor que será removido (do topo)
+    int valorDesimplilhado = topo->valor;
+    // Atualiza o topo para o próximo nó da pilha
+    topo = aux->proximo;
+
+    // Exibe o valor removido
+    printf("Valor desempilhado = %d\n", valorDesimplilhado);
+
+    // Libera a memória do nó removido
+    free(aux);
+
+    // Retorna o novo topo (pode ser NULL se a pilha ficou vazia)
+    return topo;
+}
+
+// Função auxiliar para imprimir todos os elementos da pilha
+void imprimir(No* topo) {
+
+    // Caso a pilha esteja vazia
+    if (topo == NULL) {
+        printf("Pilha vazia!\n");
+        return; // Como é void, não pode retornar NULL
+    }
+
+    // Informa o início da impressão
+    printf("Elementos da pilha (do topo para a base):\n");
+
+    // Cria um ponteiro para percorrer a pilha sem perder o topo
+    No* atual = topo;
+
+    // Percorre a pilha enquanto houver nós
+    while (atual != NULL) {
+        printf("%d ", atual->valor);   // Imprime o valor do nó atual
+        atual = atual->proximo;        // Move para o próximo nó
+    }
+
+    printf("\n"); // Quebra de linha no final da listagem
+}
+
+int main() {
+    No* pilha = NULL; // Inicializa a pilha vazia (topo == NULL)
+    int opcao, valor;
+
+    do {
+        // Menu de opções
+        printf("\nMenu:\n");
+        printf("1 - Sair\n");
+        printf("2 - Imprimir\n");
+        printf("3 - Desempilhar\n");
+        printf("4 - Empilhar\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &opcao);
+
+        // Estrutura de controle que executa a ação conforme a opção escolhida
+        switch (opcao) {
+            case 1:
+                printf("Saindo...\n");
+                break;
+
+            case 2:
+                imprimir(pilha); // Mostra os elementos atuais da pilha
+                break;
+
+            case 3:
+                // Remove o elemento do topo e atualiza o ponteiro da pilha
+                pilha = desimplilhar(pilha);
+                break;
+
+            case 4:
+                // Solicita o valor que será empilhado
+                printf("Digite o valor a empilhar: ");
+                scanf("%d", &valor);
+                // Insere o valor no topo e atualiza o ponteiro
+                pilha = empilhar(pilha, valor);
+                break;
+
+            default:
+                printf("Opcao invalida\n");
+                break;
+        }
+
+    } while (opcao != 1); // Continua executando até o usuário escolher "Sair"
+
+    return 0; // Encerra o programa com sucesso
+}
